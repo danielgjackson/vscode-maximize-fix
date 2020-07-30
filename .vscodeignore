@@ -1,0 +1,10 @@
+.vscode/**
+.vscode-test/**
+test/**
+.gitignore
+**/jsconfig.json
+**/*.map
+**/.eslintrc.json
+build.cmd
+vscode-maximize-fix.c
+vscode-maximize-fix.rc
