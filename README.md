@@ -4,16 +4,18 @@
 
 ## Features
 
-This code tweaks the VS Code window style to fix an issue where the maximized window is larger than the screen on some computers with mixed monitor DPIs.
+This code tweaks VS Code windows to fix an issue where the maximized window is larger than the screen on some computers with mixed monitor DPIs.
 
 See [VS Code issue 85592](https://github.com/microsoft/vscode/issues/85592).
 
-* Command *Maximize Window Fix* (`vscode-maximize-fix.fix`) with default hot-key `Ctrl`+`Alt`+`Shift`+`M`.
-* A small status bar icon to perform the action.
+The extension adds:
 
-The program simply finds any window title ending with *Visual Studio Code* (or specified on the command-line) and removes the style `WS_CAPTION`.
+* A command *Maximize Window Fix* (`vscode-maximize-fix.fix`) with default hot-key `Ctrl`+`Alt`+`Shift`+`M`.
+* A small status bar icon (☐) to also perform the action.
 
-If you don't want to use the extension, you can manually run `vscode-maximize-fix.exe`, a ready built version available from: [Releases](https://github.com/danielgjackson/vscode-maximize-fix/releases/tag/1.0).
+The program finds any window title ending with *Visual Studio Code* or *Visual Studio Code - Insiders* and removes the `WS_CAPTION` style.
+
+If you don't want to use the extension, you can manually run the underlying executable `vscode-maximize-fix.exe` (you can specify custom window title suffixes as arguments), and a ready built version is available from: [releases](https://github.com/danielgjackson/vscode-maximize-fix/releases).
 
 
 ## Requirements

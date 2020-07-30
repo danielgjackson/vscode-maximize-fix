@@ -6,9 +6,12 @@ const child_process = require('child_process');
 
 const title = 'Maximize Window Fix';
 
-const titleSuffix = 'Visual Studio Code';
+const suffixList = [
+	'Visual Studio Code',
+	'Visual Studio Code - Insiders',
+];
 
-function spawnProcess(context, suffix) {
+function spawnProcess(context, suffixList) {
 	try {
 		const options = {};
 		
@@ -17,7 +20,7 @@ function spawnProcess(context, suffix) {
 		
 		let process;
 		if (fs.existsSync(command)) {
-			process = child_process.spawn(command, [suffix], options);
+			process = child_process.spawn(command, suffixList, options);
 		} else {
 			console.error(`${title}: External program not found: ${command}`);
 			return false;
@@ -40,7 +43,7 @@ function runFix(context) {
 	const release = os.release().split('.').map(x => parseInt(x));
 	if (os.platform() !== 'win32') {
 		vscode.window.showWarningMessage(`${title}: This extension can only work on Windows.`);
-	} else if (spawnProcess(context, titleSuffix)) {
+	} else if (spawnProcess(context, suffixList)) {
 		//vscode.window.showInformationMessage(`${title}: Fixing maximized windows`);
 		statusMessage('Fixing maximized windows...');
 	} else {
