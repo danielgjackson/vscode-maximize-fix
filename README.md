@@ -1,2 +1,7 @@
-# vscode-maximize-fix
-Fixes an issue with VS Code and maximized windows
+# VS Code Maximized Fix
+
+This code tweaks the VS Code window style to fix an issue where the maximized window is larger than the screen.
+
+See [VS Code issue 85592](https://github.com/microsoft/vscode/issues/85592).
+
+The program simply finds any window title ending with *Visual Studio Code* (or specified on the command-line) and removes the style `WS_CAPTION`.
