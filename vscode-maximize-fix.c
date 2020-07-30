@@ -8,30 +8,38 @@
 // State for finding a window
 typedef struct
 {
-	const TCHAR *suffix;
+	const TCHAR **suffix;
+	int numSuffixes;
 	int numMatches;
+	int numChanges;
 } find_state_t;
 
-static void AdjustWindowStyles(HWND hWnd)
+static BOOL AdjustWindowStyles(HWND hWnd)
 {
-	// Remove the WS_CAPTION style (don't do anything if already removed)
 	LONG style = GetWindowLong(hWnd, GWL_STYLE);
-	if (style & WS_CAPTION)
+	
+	// Don't adjust windows that have already had their style altered
+	if (!(style & WS_CAPTION))
 	{
-		style &= ~WS_CAPTION;
-		SetWindowLong(hWnd, GWL_STYLE, style);
-		
-		// So that new styles take effect?
-		ShowWindow(hWnd, SW_HIDE);
-		ShowWindow(hWnd, SW_SHOW);
-		
-		// If already maximized, restore and maximize again
-		if (style & WS_MAXIMIZE)
-		{
-			ShowWindow(hWnd, SW_RESTORE);
-			ShowWindow(hWnd, SW_MAXIMIZE);
-		}
+		return FALSE;
 	}
+	
+	// Remove the WS_CAPTION style
+	style &= ~WS_CAPTION;
+	SetWindowLong(hWnd, GWL_STYLE, style);
+	
+	// So that new styles take effect?
+	ShowWindow(hWnd, SW_HIDE);
+	ShowWindow(hWnd, SW_SHOW);
+	
+	// If already maximized, restore and maximize again
+	if (style & WS_MAXIMIZE)
+	{
+		ShowWindow(hWnd, SW_RESTORE);
+		ShowWindow(hWnd, SW_MAXIMIZE);
+	}
+	
+	return TRUE;
 }
 
 // Callback helper to match on a window title's suffix
@@ -45,22 +53,34 @@ static BOOL CALLBACK enumFuncFindSuffix(HWND hWnd, LPARAM lparam)
 		TCHAR *windowTitle = (TCHAR *)malloc((length + 1) * sizeof(TCHAR));
 		GetWindowText(hWnd, windowTitle, length + 1);
 		
-		// Find last matching substring
-		TCHAR *last = NULL;
-		for (TCHAR *match, *search = windowTitle; (match = _tcsstr(search, findState->suffix)) != NULL; search++)
+		BOOL matched = FALSE;
+		for (int i = 0; i < findState->numSuffixes; i++)
 		{
-			last = match;
+			// Find last matching substring
+			TCHAR *last = NULL;
+			for (TCHAR *match, *search = windowTitle; (match = _tcsstr(search, findState->suffix[i])) != NULL; search++)
+			{
+				last = match;
+			}
+			
+			// Only matched if it is the title's suffix
+			matched = (last != NULL && (last - windowTitle) + _tcslen(findState->suffix[i]) >= _tcslen(windowTitle));
+			if (matched) break;
 		}
-		
-		// Only matched if it is the title's suffix
-		BOOL matched = (last != NULL && (last - windowTitle) + _tcslen(findState->suffix) >= _tcslen(windowTitle));
 		
 		// Adjust matching windows
 		if (matched)
 		{
 			findState->numMatches++;
-			_tprintf(TEXT("FOUND #%d: %s\n"), findState->numMatches, windowTitle);
-			AdjustWindowStyles(hWnd);
+			if (AdjustWindowStyles(hWnd))
+			{
+				findState->numChanges++;
+				_tprintf(TEXT("FIXED #%d/%d: %s\n"), findState->numChanges, findState->numMatches, windowTitle);
+			}
+			else
+			{
+				_tprintf(TEXT("SKIPPED #%d/%d: %s\n"), findState->numMatches - findState->numChanges, findState->numMatches, windowTitle);
+			}
 		}
 		
 		free(windowTitle);
@@ -71,12 +91,31 @@ static BOOL CALLBACK enumFuncFindSuffix(HWND hWnd, LPARAM lparam)
 int main(int argc, TCHAR *argv[])
 {
 	find_state_t findState = {0};
-	findState.suffix = TEXT("Visual Studio Code");
-	if (argc > 1) findState.suffix = argv[1];
+	
+	// Default window suffixes
+	TCHAR *defaultSuffixes[] = {
+		TEXT("Visual Studio Code"),
+		TEXT("Visual Studio Code - Insiders"),
+	};
+	findState.numSuffixes = sizeof(defaultSuffixes) / sizeof(TCHAR *);
+	findState.suffix = defaultSuffixes;
+	
+	// Overridden by command line options
+	if (argc > 1)
+	{
+		findState.numSuffixes = argc - 1;
+		findState.suffix = argv + 1;
+	}
+	
 	EnumWindows(enumFuncFindSuffix, (LPARAM)&findState);
 	if (findState.numMatches == 0)
 	{
-		_tprintf(TEXT("ERROR: No windows found matching suffix: %s\n"), findState.suffix);
+		_tprintf(TEXT("ERROR: No windows found matching suffix(es): "));
+		for (int i = 0; i < findState.numSuffixes; i++)
+		{
+			_tprintf(TEXT("%s\"%s\""), i > 0 ? TEXT(" | ") : TEXT(""), findState.suffix[i]);
+		}
+		_tprintf(TEXT("\n"));
 		return 1;
 	}
 	return 0;
