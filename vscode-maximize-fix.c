@@ -93,7 +93,7 @@ int main(int argc, TCHAR *argv[])
 	find_state_t findState = {0};
 	
 	// Default window suffixes
-	TCHAR *defaultSuffixes[] = {
+	const TCHAR *defaultSuffixes[] = {
 		TEXT("Visual Studio Code"),
 		TEXT("Visual Studio Code - Insiders"),
 	};
@@ -104,7 +104,7 @@ int main(int argc, TCHAR *argv[])
 	if (argc > 1)
 	{
 		findState.numSuffixes = argc - 1;
-		findState.suffix = argv + 1;
+		findState.suffix = (const TCHAR **)(argv + 1);
 	}
 	
 	EnumWindows(enumFuncFindSuffix, (LPARAM)&findState);
