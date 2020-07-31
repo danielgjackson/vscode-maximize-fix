@@ -1,4 +1,8 @@
-# wsl sudo apt install gcc-mingw-w64
+# To build with native Windows toolchain use: build.cmd
+#
+# To cross-compile from WSL:
+#
+# wsl sudo apt install build-essential gcc-mingw-w64
 # wsl make
 
 BIN_NAME = vscode-maximize-fix.exe

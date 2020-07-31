@@ -1,13 +1,13 @@
 {
 	"name": "vscode-maximize-fix",
-	"displayName": "Maximize Window Fix",
-	"description": "Fixes issue with the maximized window being larger than the screen on some computers with mixed monitor DPIs.",
+	"displayName": "Maximized Window Fix",
+	"description": "Fixes an issue where the maximized window is larger than the screen on some computers with mixed DPI monitors.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/danielgjackson/vscode-maximize-fix.git"
 	},
 	"publisher": "danielgjackson",
-	"version": "0.0.3",
+	"version": "1.3.0",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.47.0"
@@ -22,7 +22,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
+		"onStartupFinished",
 		"onCommand:vscode-maximize-fix.fix"
 	],
 	"extensionKind": [
@@ -43,7 +43,29 @@
 			}
 		],
 		"configuration": {
-			"title": "Maximize Window Fix"
+			"title": "Maximized Window Fix",
+			"properties": {
+				"vscode-maximize-fix.auto": {
+					"type": "boolean",
+					"default": true,
+					"description": "Automatically run the Maximize Window Fix when the extension starts."
+				},
+				"vscode-maximize-fix.statusbar": {
+					"type": "boolean",
+					"default": true,
+					"description": "Shows a status bar icon (☐) to show feedback or to manually run the fix (changes apply to new windows only)."
+				},
+				"vscode-maximize-fix.suffix-vscode": {
+					"type": "string",
+					"default": "Visual Studio Code",
+					"description": "Window title suffix to match VS Code windows"
+				},
+				"vscode-maximize-fix.suffix-vscode-insiders": {
+					"type": "string",
+					"default": "Visual Studio Code - Insiders",
+					"description": "Window title suffix to match VS Code Insiders windows"
+				}
+			}
 		}
 	},
 	"scripts": {
