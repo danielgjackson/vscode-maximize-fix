@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.4.0
+
+- Added a check for the (default) setting `window.titleBarStyle` == `custom`.
+- Created an option to ignore system/configuration checks and run anyway: `vscode-maximize-fix.force`.
+- Set the toolbar icon's tooltip as the last status message.
+- Fixed a reporting bug if more than one window was adjusted.
+
 ## 1.3.0
 
 - Bumped version number to match executable release.

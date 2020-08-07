@@ -14,17 +14,12 @@ You should not have to manually run the fix but, if you need to, the extension a
 
 The "fix" finds matching windows (by default, those with titles ending with *Visual Studio Code* or *Visual Studio Code - Insiders*) and removes the `WS_CAPTION` window style.  
 
-<!-- 
-TODO: Add a check for `window.titleBarStyle` == `custom`
-Please note that this assumes you have `window.titleBarStyle` on the default setting of `custom`; a setting of `native` might be another way to avoid this bug, but do not use with this extension as your windows will be difficult to control without a title bar!
--->
-
-As an alternative to the extension, you can manually run the underlying executable `vscode-maximize-fix.exe` (you can specify custom window title suffixes as arguments), and a ready built version is available from: [releases](https://github.com/danielgjackson/vscode-maximize-fix/releases).
+This extension is [open source](https://github.com/danielgjackson/vscode-maximize-fix).  As an alternative, you could manually run the underlying executable `vscode-maximize-fix.exe` (you can specify custom window title suffixes as arguments), and a ready built version is available from: [releases](https://github.com/danielgjackson/vscode-maximize-fix/releases).
 
 
 ## Requirements
 
-Only runs (and is only needed) on Windows.
+This extension is only needed on Windows with the (default) setting `window.titleBarStyle` == `custom`.
 
 
 ## Extension Settings
@@ -35,7 +30,7 @@ Settings:
 * `vscode-maximize-fix.statusbar` -- Shows a status bar icon (☐) to show feedback or to manually run the fix. (default: true)
 * `vscode-maximize-fix.suffix-vscode` -- Window title suffix to match VS Code windows. (default: *Visual Studio Code*)
 * `vscode-maximize-fix.suffix-vscode-insiders` -- Window title suffix to match VS Code Insiders windows. (default: *Visual Studio Code - Insiders*)
-* `vscode-maximize-fix.force` -- Ignore checks for the right platform/configuration and always run the fix. (default: false)
+* `vscode-maximize-fix.force` -- Ignore checks for the right platform/configuration and always run the fix. Be warned that your title bar might go missing! (default: false)
 
 
 ## Release Notes
@@ -47,4 +42,5 @@ See: [Change Log](CHANGELOG.md)
 
 * [GitHub Page: danielgjackson/vscode-maximize-fix](https://github.com/danielgjackson/vscode-maximize-fix)
 * [Visual Studio Marketplace: Maximize Window Fix](https://marketplace.visualstudio.com/items?itemName=danielgjackson.vscode-maximize-fix)
+
 <!-- vsce package && vsce publish -->
