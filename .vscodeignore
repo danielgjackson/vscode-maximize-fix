@@ -8,3 +8,6 @@ test/**
 build.cmd
 vscode-maximize-fix.c
 vscode-maximize-fix.rc
+*.obj
+*.res
+*.o

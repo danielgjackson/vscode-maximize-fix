@@ -2,8 +2,7 @@
 #
 # To cross-compile from WSL:
 #
-# wsl sudo apt install build-essential gcc-mingw-w64
-# wsl make
+# wsl sudo apt install build-essential gcc-mingw-w64 && wsl make
 
 BIN_NAME = vscode-maximize-fix.exe
 CC = x86_64-w64-mingw32-gcc

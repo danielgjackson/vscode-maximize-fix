@@ -6,6 +6,7 @@
 - Created an option to ignore system/configuration checks and run anyway: `vscode-maximize-fix.force`.
 - Set the toolbar icon's tooltip as the last status message.
 - Fixed a reporting bug if more than one window was adjusted.
+- Removed junk files from the .vsix package.
 
 ## 1.3.0
 
