@@ -35,6 +35,7 @@ Settings:
 * `vscode-maximize-fix.statusbar` -- Shows a status bar icon (☐) to show feedback or to manually run the fix. (default: true)
 * `vscode-maximize-fix.suffix-vscode` -- Window title suffix to match VS Code windows. (default: *Visual Studio Code*)
 * `vscode-maximize-fix.suffix-vscode-insiders` -- Window title suffix to match VS Code Insiders windows. (default: *Visual Studio Code - Insiders*)
+* `vscode-maximize-fix.force` -- Ignore checks for the right platform/configuration and always run the fix. (default: false)
 
 
 ## Release Notes

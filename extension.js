@@ -5,6 +5,9 @@ const child_process = require('child_process');
 
 const title = 'Maximize Window Fix';
 
+// Assign this to the three-part version number that fixes the issue (so the user is prompted to remove the extension).
+const fixedVersionString = null;	// '1.23.45'
+
 const suffixList = [
 	'Visual Studio Code',
 	'Visual Studio Code - Insiders',
@@ -67,25 +70,32 @@ function spawnProcess(context, suffixList) {
 }
 
 async function runFix(context) {
-	if (os.platform() !== 'win32') {
+	const config = vscode.workspace.getConfiguration('vscode-maximize-fix');
+	if (os.platform() !== 'win32' && !config.force) {
 		vscode.window.showWarningMessage(`${title}: This extension can only work on Windows.`);
 	} else {
 		try {
-			//vscode.window.showInformationMessage(`${title}: Fixing maximized windows`);
-			statusMessage(`Fixing...`);
-			const result = await spawnProcess(context, suffixList);
-			let message;
-			if (result.fixed == 0) {
-				message = `No new windows to fix (${result.total} already fixed).`;
-			} else if (result.fixed == 1) {
-				message = `Applied maximized window fix.`;
+			const windowConfig = vscode.workspace.getConfiguration('window');
+			if (windowConfig.titleBarStyle === 'custom' || config.force) {
+				//vscode.window.showInformationMessage(`${title}: Fixing maximized windows`);
+				statusMessage(`Fixing...`);
+				const result = await spawnProcess(context, suffixList);
+				let message;
+				if (result.fixed == 0) {
+					message = `No new windows to fix (${result.total} already fixed).`;
+				} else if (result.fixed == 1) {
+					message = `Maximized window fix applied.`;
+				} else {
+					message = `Maximized window fix applied to ${result.fixed} windows.`;
+				}
+				statusMessage(message);
 			} else {
-				message = `Applied maximized window fix to ${result.fixed} windows.`;
+				vscode.window.showWarningMessage(`${title}: This extension would only run properly with the setting: "window.titleBarStyle" == "custom". This check can be overridden with: "vscode-maximize-fix.force".`);
 			}
-			statusMessage(message);
 		} catch (e) {
-			statusMessage(`Error while fixing maximized windows.`);
-			vscode.window.showErrorMessage(`${title}: Error spawning fix process: ${e.error}`);
+			const msg = `Error while fixing maximized windows${config.force ? ' (was forced to try)' : ''}: ${e.error}.`;
+			statusMessage(msg);
+			vscode.window.showErrorMessage(`${title}: ${msg}`);
 		}
 	}
 }
@@ -115,18 +125,13 @@ function activate(context) {
 	if (config.statusbar) {
 		statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 105);
 		statusBarItem.command = commandId;
+		statusBarItem.tooltip = title;
 		context.subscriptions.push(statusBarItem);
 	}
 	updateStatusBarItem();
 
-	// Auto-run on start
-	if (config.auto) {
-		vscode.commands.executeCommand(commandId);
-	}
-	
 	// If there is a fix in the future, this will inform the user
-	const fixedVersionString = null;	// '1.23.45'
-	if (fixedVersionString) {
+	if (fixedVersionString && !config.force) {
 		const fix = fixedVersionString.split('.').map(n => parseInt(n));
 		const cur = vscode.version.split('.').map(n => parseInt(n));
 		if (cur[0] > fix[0]
@@ -134,13 +139,18 @@ function activate(context) {
 			|| (cur[0] == fix[0] && cur[1] == fix[1] && cur[2] >= fix[2])) {
 
 			vscode.window.showInformationMessage(
-				`${title}: This issue should be fixed in VS Code V${vscode.version} (since V${fixedVersionString}), so you could now remove this extension.`,
+				`${title}: This issue should be fixed in VS Code V${vscode.version} (since V${fixedVersionString}), so you could now remove this extension. This check can be overridden with: "vscode-maximize-fix.force".`,
 				'Extension Settings...'
 			).then((item) => {
 				if (!item) return;
 				vscode.commands.executeCommand('workbench.extensions.action.showExtensionsWithIds', ['danielgjackson.vscode-maximize-fix']);
 			});
 		}
+	}
+
+	// Auto-run on start
+	if (config.auto) {
+		vscode.commands.executeCommand(commandId);
 	}
 }
 
@@ -156,7 +166,10 @@ function updateStatusBarItem() {
 		text = text + ' ' + currentStatusMessage;
 	}
 	statusBarItem.text = text;
-	statusBarItem.tooltip = `Fix Maximized Windows`;
+	// Leave tooltip as last message
+	if (currentStatusMessage && statusBarItem.tooltip != currentStatusMessage) {
+		statusBarItem.tooltip = currentStatusMessage;
+	}
 	statusBarItem.show();
 }
 

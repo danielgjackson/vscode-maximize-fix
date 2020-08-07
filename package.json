@@ -64,6 +64,11 @@
 					"type": "string",
 					"default": "Visual Studio Code - Insiders",
 					"description": "Window title suffix to match VS Code Insiders windows"
+				},
+				"vscode-maximize-fix.force": {
+					"type": "boolean",
+					"default": false,
+					"description": "Ignore checks for the right platform/configuration and always run the fix."
 				}
 			}
 		}
