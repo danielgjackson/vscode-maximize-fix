@@ -80,7 +80,7 @@ async function runFix(context) {
 			} else if (result.fixed == 1) {
 				message = `Applied maximized window fix.`;
 			} else {
-				message = `Applied maximized window fix to ${results.fixed} windows.`;
+				message = `Applied maximized window fix to ${result.fixed} windows.`;
 			}
 			statusMessage(message);
 		} catch (e) {
