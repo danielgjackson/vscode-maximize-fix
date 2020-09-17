@@ -131,15 +131,17 @@ function activate(context) {
 	updateStatusBarItem();
 
 	// If there is a fix in the future, this will inform the user
+	let disableAutoRun = false;
 	if (fixedVersionString && !config.force) {
 		const fix = fixedVersionString.split('.').map(n => parseInt(n));
 		const cur = vscode.version.split('.').map(n => parseInt(n));
 		if (cur[0] > fix[0]
 			|| (cur[0] == fix[0] && cur[1] > fix[1])
 			|| (cur[0] == fix[0] && cur[1] == fix[1] && cur[2] >= fix[2])) {
-
+				
+			disableAutoRun = true;
 			vscode.window.showInformationMessage(
-				`${title}: This issue should be fixed in VS Code V${vscode.version} (since V${fixedVersionString}), so you could now remove this extension. This check can be overridden with: "vscode-maximize-fix.force".`,
+				`${title}: ${config.auto ? 'Not automatically running as:' : ''} The maximize issue should be fixed in this VS Code V${vscode.version} (since V${fixedVersionString}) -- you should now be able to remove this extension. You can still run it manually, or you can override this check with: "vscode-maximize-fix.force".`,
 				'Extension Settings...'
 			).then((item) => {
 				if (!item) return;
@@ -148,8 +150,8 @@ function activate(context) {
 		}
 	}
 
-	// Auto-run on start
-	if (config.auto) {
+	// Auto-run on start (if not disabled by running on a version with the bug fixed -- unless forced to do so!)
+	if (config.auto && (!disableAutoRun || config.force)) {
 		vscode.commands.executeCommand(commandId);
 	}
 }
