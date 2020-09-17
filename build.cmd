@@ -2,9 +2,17 @@
 SETLOCAL EnableDelayedExpansion
 CD /D %~dp0
 
-SET INTERACTIVE=
-ECHO.%CMDCMDLINE% | FINDSTR /C:"%windir%\system32\cmd.exe /c" >NUL
-IF ERRORLEVEL 1 SET INTERACTIVE=1
+rem If launched from anything other than cmd.exe, will have "%WINDIR%\system32\cmd.exe" in the command line
+ECHO.%CMDCMDLINE% | FINDSTR /C:"%COMSPEC% /c" >NUL
+IF ERRORLEVEL 1 GOTO NONINTERACTIVE
+rem Preserve this as it seems to be corrupted below otherwise?!
+SET CMDLINE=%CMDCMDLINE%
+rem If launched from anything other than cmd.exe, last character of command line will always be a double quote
+IF NOT ^!CMDCMDLINE:~-1!==^" GOTO NONINTERACTIVE
+rem If run from Explorer, last-but-one character of command line will be a space
+IF NOT "!CMDLINE:~-2,1!"==" " GOTO NONINTERACTIVE
+SET INTERACTIVE=1
+:NONINTERACTIVE
 
 SET FIND_CL=
 FOR %%p IN (cl.exe) DO SET "FIND_CL=%%~$PATH:p"
@@ -34,11 +42,11 @@ ECHO Linking...
 link %NOLOGO% /out:vscode-maximize-fix.exe User32.lib vscode-maximize-fix vscode-maximize-fix.res
 IF ERRORLEVEL 1 GOTO ERROR
 ECHO Done.
-IF NOT DEFINED INTERACTIVE COLOR 2F & PAUSE & COLOR
+IF DEFINED INTERACTIVE COLOR 2F & PAUSE & COLOR
 GOTO :EOF
 
 :ERROR
 ECHO ERROR: An error occured.
-IF NOT DEFINED INTERACTIVE COLOR 4F & PAUSE & COLOR
+IF DEFINED INTERACTIVE COLOR 4F & PAUSE & COLOR
 EXIT /B 1
 GOTO :EOF
