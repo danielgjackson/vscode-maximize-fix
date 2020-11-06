@@ -67,6 +67,8 @@ You can build your own extension package `.vsix` file (*Node.js* must be install
 To publish your extension:
 
 * `vsce publish`
+
+...if the Personal Access Token has expired, first [create a new PAT](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token) and login with: `vsce login $PUBLISHER`
 -->
 
 As an alternative to using the extension, you can manually run the underlying executable `vscode-maximize-fix.exe` (you may specify custom window title suffixes as arguments):
