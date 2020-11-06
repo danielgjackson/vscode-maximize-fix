@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.5.0
+
+- The underlying issue seems to be fixed in the current stable version of VS Code.  On a fixed version, the extension informs the user that it has not auto-run and suggests uninstalling.  It can still be run manually, and the version check can be bypassed with the `vscode-maximize-fix.force` extension setting.
+
 ## 1.4.0
 
 - Added a check for the (default) setting `window.titleBarStyle` == `custom`.

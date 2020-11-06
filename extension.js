@@ -5,8 +5,8 @@ const child_process = require('child_process');
 
 const title = 'Maximize Window Fix';
 
-// Assign this to the three-part version number that fixes the issue (so the user is prompted to remove the extension).
-const fixedVersionString = null;	// '1.23.45'
+// Assign this to the three-part version number that fixes the issue (the user is prompted to uninstall the extension).
+const fixedVersionString = '1.51.0';
 
 const suffixList = [
 	'Visual Studio Code',
@@ -130,7 +130,7 @@ function activate(context) {
 	}
 	updateStatusBarItem();
 
-	// If there is a fix in the future, this will inform the user
+	// If the issue is fixed, this will inform the user if they are using a fixed version
 	let disableAutoRun = false;
 	if (fixedVersionString && !config.force) {
 		const fix = fixedVersionString.split('.').map(n => parseInt(n));
@@ -140,12 +140,34 @@ function activate(context) {
 			|| (cur[0] == fix[0] && cur[1] == fix[1] && cur[2] >= fix[2])) {
 				
 			disableAutoRun = true;
+			const infoLink = { 
+				type: 'url', 
+				//title: 'More Details',
+				//url: 'https://github.com/danielgjackson/vscode-maximize-fix/blob/master/README.md',
+				title: 'VS Code Issue 85592', 
+				url: 'https://github.com/microsoft/vscode/issues/85592#event-3884295282',
+			};
+			const extensionSettings = {
+				type: 'extension-settings',
+				title: 'Extension Settings...',
+			};
 			vscode.window.showInformationMessage(
-				`${title}: ${config.auto ? 'Not automatically running as:' : ''} The maximize issue should be fixed in this VS Code V${vscode.version} (since V${fixedVersionString}) -- you should now be able to remove this extension. You can still run it manually, or you can override this check with: "vscode-maximize-fix.force".`,
-				'Extension Settings...'
+				`${title}: 
+					Thanks for using this extension -- but you can probably uninstall it now! 
+					The maximize issue should be fixed since V${fixedVersionString} (you are running V${vscode.version}). 
+					${config.auto ? 'Because of this, the \'fix\' was not automatically applied. ' : ''}
+					You can still apply it manually with the status bar icon (☐), or you can remove this warning by overriding the version check with the extension setting: "vscode-maximize-fix.force".
+				`,
+				infoLink,
+				extensionSettings,
 			).then((item) => {
-				if (!item) return;
-				vscode.commands.executeCommand('workbench.extensions.action.showExtensionsWithIds', ['danielgjackson.vscode-maximize-fix']);
+				if (!item || !item.type) return;
+				if (item.type == 'extension-settings') {
+					vscode.commands.executeCommand('workbench.extensions.action.showExtensionsWithIds', ['danielgjackson.vscode-maximize-fix']);
+				}
+				if (item.type == 'url') {
+					vscode.env.openExternal(vscode.Uri.parse(item.url));
+				}
 			});
 		}
 	}

@@ -2,9 +2,12 @@
 
 <!-- ![Maximize Window](icon.png) -->
 
+**Important:** The issue [seems to be fixed](https://github.com/microsoft/vscode/issues/85592#event-3884295282) in the current version of VS Code (since V1.51, October 2020), so this extension should no longer be required.  If you are on that version or later, the extension will not auto-run the fix and it will suggest uninstalling.  If you find you do still need it, you can run the fix manually by clicking on the status bar icon (☐), and/or set the `vscode-maximize-fix.force` extension setting described below to prevent the warning.
+
+
 ## Features
 
-This fixes a VS Code issue where the maximized window is larger than the screen on some computers with mixed DPI monitors.  See [VS Code issue 85592](https://github.com/microsoft/vscode/issues/85592) for details.
+This extension works around [VS Code issue 85592](https://github.com/microsoft/vscode/issues/85592), where the maximized window is larger than the screen on some computers with mixed DPI monitors.  
 
 The fix runs automatically when the extension starts, and a small small status bar icon (☐) shows feedback.  It works by finding VS Code windows (by default, those with titles ending with *Visual Studio Code* or *Visual Studio Code - Insiders*) and removes the `WS_CAPTION` window style. 
 
@@ -13,7 +16,7 @@ You should not have to manually run the fix but, if you choose to, the extension
 
 ## Requirements
 
-This extension is only needed on Windows with the (default) setting `window.titleBarStyle` == `custom`.
+This extension is only needed in affected versions running on Windows with the (default) setting `window.titleBarStyle` == `custom`.
 
 
 ## Extension Settings
@@ -24,7 +27,7 @@ Settings:
 * `vscode-maximize-fix.statusbar` -- Shows a status bar icon (☐) to show feedback or to manually run the fix. (default: true)
 * `vscode-maximize-fix.suffix-vscode` -- Window title suffix to match VS Code windows. (default: *Visual Studio Code*)
 * `vscode-maximize-fix.suffix-vscode-insiders` -- Window title suffix to match VS Code Insiders windows. (default: *Visual Studio Code - Insiders*)
-* `vscode-maximize-fix.force` -- Ignore checks for the right platform/configuration and always run the fix. Be warned that your title bar might go missing! (default: false)
+* `vscode-maximize-fix.force` -- Ignore checks for the right platform/configuration/version and always run the fix. Be warned that your title bar might go missing if you've changed the (default) setting `window.titleBarStyle` == `custom`. (default: false)
 
 
 ## Release Notes
